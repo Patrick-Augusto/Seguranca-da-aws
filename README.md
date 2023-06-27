@@ -1,91 +1,112 @@
-# Dio-Seguran-a-aws
+# Seguranca-a-aws
 
-Serviços AWS utilizados
-Amazon Cognito
-Amazon DynamoDB
-Amazon API Gateway
-AWS Lambda
-Etapas do desenvolvimento
-Criando uma API REST no Amazon API Gateway
-API Gateway Dashboard -> Create API -> REST API -> Build
-Protocol - REST -> Create new API -> API name [dio_live_api] -> Endpoint Type - Regional -> Create API
-Resources -> Actions -> Create Resource -> Resource Name [Items] -> Create Resource
-No Amazon DynamoDB
-DynamoDB Dashboard -> Tables -> Create table -> Table name [Items] -> Partition key [id] -> Create table
-No AWS Lambda
-Função para inserir item
-Lambda Dashboard -> Create function -> Name [put_item_function] -> Create function
-Inserir código da função put_item_function.js disponível na pasta /src -> Deploy
-Configuration -> Execution role -> Abrir a Role no console do IAM
-IAM -> Roles -> Role criada no passo anterior -> Permissions -> Add inline policy
-Service - DynamoDB -> Manual actions -> add actions -> putItem
-Resources -> Add arn -> Selecionar o arn da tabela criada no DynamoDB -> Add
-Review policy -> Name [lambda_dynamodb_putItem_policy] -> Create policy
-Integrando o API Gateway com o Lambda backend
-API Gateway Dashboard -> Selecionar a API criada -> Resources -> Selecionar o resource criado -> Action -> Create method - POST
-Integration type -> Lambda function -> Use Lambda Proxy Integration -> Lambda function -> Selecionar a função Lambda criada -> Save
-Actions -> Deploy API -> Deployment Stage -> New Stage [dev] -> Deploy
-No POSTMAN
-Add Request -> Method POST -> Copiar o endpoint gerado no API Gateway
-Body -> Raw -> JSON -> Adicionar o seguinte body
-{
-  "id": "003",
-  "price": 600
-}
-Send
-No Amazon Cognito
-Cognito Dashboard -> Manage User Pools -> Create a User Pool -> Pool name [TestPool]
+Este projeto demonstra a utilização de vários serviços da AWS para implementar recursos de segurança.
 
-How do you want your end users to sign in? - Email address or phone number -> Next Step
+## Serviços AWS utilizados
 
-What password strength do you want to require?
+- Amazon Cognito
+- Amazon DynamoDB
+- Amazon API Gateway
+- AWS Lambda
 
-Do you want to enable Multi-Factor Authentication (MFA)? Off -> Next Step
+## Etapas do desenvolvimento
 
-Do you want to customize your email verification messages? -> Verification type - Link -> Next Step
+### Criando uma API REST no Amazon API Gateway
 
-Which app clients will have access to this user pool? -> App client name [TestClient] -> Create App Client -> Next Step
+1. Acesse o painel de controle do API Gateway.
+2. Clique em "Create API" e selecione "REST API".
+3. Selecione o protocolo "REST" e clique em "Create new API".
+4. Defina um nome para a API (exemplo: `dio_live_api`) e selecione o tipo de Endpoint como "Regional".
+5. Clique em "Create API".
 
-Create Pool
+### Criando uma tabela no Amazon DynamoDB
 
-App integration -> App client settings -> Enabled Identity Providers - Cognito User Pool
+1. Acesse o painel de controle do DynamoDB.
+2. Clique em "Tables" e depois em "Create table".
+3. Defina um nome para a tabela (exemplo: `Items`).
+4. Escolha uma chave de partição (exemplo: `id`).
+5. Clique em "Create table".
 
-Callback URL(s) [https://example.com/logout]
+### Criando uma função AWS Lambda para inserir itens
 
-OAuth 2.0 -> Allowed OAuth Flows - Authorization code grant -Implicit grant
+1. Acesse o painel de controle do Lambda.
+2. Clique em "Create function".
+3. Defina um nome para a função (exemplo: `put_item_function`).
+4. Cole o código da função `put_item_function.js` disponível na pasta `/src`.
+5. Configure a função conforme suas necessidades.
+6. Clique em "Create function".
 
-Allowed OAuth Scopes - email - openid
+### Integrando o API Gateway com o Lambda backend
 
-Save Changes
+1. No painel do API Gateway, selecione a API criada anteriormente.
+2. Clique em "Resources" e selecione o resource criado.
+3. Clique em "Actions" e depois em "Create method".
+4. Escolha o método HTTP desejado (exemplo: POST).
+5. Selecione "Lambda function" como tipo de integração.
+6. Marque a opção "Use Lambda Proxy Integration".
+7. Selecione a função Lambda criada anteriormente.
+8. Clique em "Save" e depois em "Deploy API".
+9. Crie um novo estágio (exemplo: `dev`) e clique em "Deploy".
 
-Domain name -> Domain prefix [diolive] -> Save
+### Utilizando o Postman para testar a API
 
-Criando um autorizador do Amazon Cognito para uma API REST no Amazon API Gateway
-API Gateway Dashboard -> Selecionar a API criada -> Authorizers -> Create New Authorizer
+1. Adicione uma nova requisição no Postman.
+2. Selecione o método POST.
+3. Copie o endpoint gerado pelo API Gateway.
+4. Defina o corpo da requisição no formato JSON. Por exemplo:
+   ```json
+   {
+     "id": "003",
+     "price": 600
+   }
+   ```
+5. Envie a requisição.
 
-Name [CognitoAuth] -> Type - Cognito -> Cognito User Pool [pool criada anteriormente] -> Token Source [Authorization]
+### Configurando o Amazon Cognito
 
-Resources -> selecionar o resource criado -> selecionar o método criado -> Method Request -> Authorization - Selecionar o autorizador criado
+1. Acesse o painel de controle do Cognito.
+2. Clique em "Manage User Pools".
+3. Crie um novo User Pool com um nome desejado (exemplo: `TestPool`).
+4. Configure as opções de autenticação e personalização conforme necessário.
+5. Clique em "Create Pool".
+6. Crie um App Client para o User Pool.
+7. Defina as configurações desejadas para o App Client (exemplo: `TestClient`).
+8. Salve as alterações.
 
-No POSTMAN
-Add request -> Authorization
+### Criando um autorizador do Amazon Cognito para a API REST
 
-Type - OAuth 2.0
+1.
 
-Callback URL [https://example.com/logout]
+ No painel do API Gateway, selecione a API criada anteriormente.
+2. Clique em "Authorizers" e depois em "Create New Authorizer".
+3. Defina um nome para o autorizador (exemplo: `CognitoAuth`).
+4. Selecione o tipo "Cognito" e escolha o User Pool criado anteriormente.
+5. Defina a fonte do token como "Authorization".
+6. Selecione o resource e o método criados anteriormente.
+7. Na seção "Method Request", configure a opção "Authorization" para utilizar o autorizador criado.
 
-Auth URL [https://diolive.auth.sa-east-1.amazoncognito.com/login]
+### Obtendo um token do Amazon Cognito no Postman
 
-Client ID - obter o Client ID do Cognito em App clients
+1. Adicione uma nova requisição no Postman para inserir um item.
+2. Clique na aba "Authorization".
+3. Selecione o tipo "OAuth 2.0".
+4. Preencha os seguintes campos:
+   - Callback URL: `https://example.com/logout`
+   - Auth URL: `https://diolive.auth.sa-east-1.amazoncognito.com/login`
+   - Client ID: Obtenha o Client ID do Cognito no App Client criado anteriormente.
+   - Scope: `email openid`
+   - Client Authentication: Selecione "Send client credentials in body".
+5. Clique em "Get New Access Token".
+6. Copie o token gerado.
+7. Na requisição de inserção de item, vá para a aba "Authorization" e selecione o tipo "Bearer Token".
+8. Cole o token copiado.
+9. Envie a requisição.
 
-Scope [email - openid]
+### Executando a análise de código com o CodeQL
 
-Client Authentication [Send client credentials in body]
+Este projeto também inclui um arquivo `codeql.yml` para configurar a análise de código com o CodeQL.
 
-Get New Acces Token
-
-Copiar o token gerado
-
-Selecionar a request para inserir item criada -> Authorization -> Type - Bearer Token -> Inserir o token copiado
-
-Send
+1. O workflow está configurado para rodar automaticamente quando ocorrer um push na branch "main" ou em pull requests para a branch "main".
+2. A análise é realizada usando o CodeQL para a linguagem `javascript`.
+3. A análise é agendada para ser executada semanalmente às 4h41 dos sábados.
+4. O resultado da análise é gerado no painel de segurança do GitHub.
